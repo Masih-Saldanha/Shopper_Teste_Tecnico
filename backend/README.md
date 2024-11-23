@@ -4,61 +4,20 @@
   </a>
 
   <h3 align="center">
-    Back-end Template
+    Shopper - Teste Técnico
   </h3>
 </p>
 
-## Description
+## Descrição
 
-This is an back-end repository template.
+Backend do Teste Técnico da Shopper.
 
-## API deploy link
-
-https://back-end-template-example.com/
-
-## Database deploy link
-
-https://back-end-template-example.com/
-
-## Usage
-
-```bash
-$ git clone https://github.com/Masih-Saldanha/back-end-template
-
-$ cd back-end-template
-
-$ npm install
-```
-Create the .env file based on .env.example
-```bash
-$ npm run dev
-```
 ## API:
 
 ### Health Check
 ```
 - GET /health
-    - Check the health status of the server.
+    - Testa se o servidor está respondendo com OK.
     - headers: {}
     - body: {}
-```
-
-## Tests:
-
-Run unit tests:
-
-```bash
-$ npm run test:unit
-```
-
-Run integration tests:
-
-```bash
-$ npm run test:integration
-```
-
-Run all tests:
-
-```bash
-$ npm run test
 ```
