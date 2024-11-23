@@ -1,0 +1,46 @@
+services:
+  postgres_shopper_db:
+    image: postgres
+    container_name: postgres_shopper_db
+    restart: always
+    ports:
+      - 4457:5432
+    env_file:
+      - ./.env
+    volumes:
+      - pg_shopper_db:/var/lib/postgresql/data
+
+  node_shopper_db:
+    container_name: node_shopper_db
+    build: ./back-end
+    ports:
+      - 5000:5000
+    depends_on:
+      - postgres_shopper_db
+    env_file:
+      - ./.env
+
+  react_shopper_app:
+    container_name: react_shopper_app
+    build: 
+      context: ./front-end
+      args:
+        REACT_APP_BASE_URL: ${REACT_APP_BASE_URL}
+    volumes:
+      - build_react:/var/www/html
+
+  nginx_shopper_app:
+    container_name: nginx_shopper_app
+    build: ./nginx
+    ports:
+      - 8080:80
+    volumes:
+      - build_react:/var/www/html
+    depends_on:
+      - postgres_shopper_db
+      - node_shopper_db
+      - react_shopper_app
+
+volumes:
+  pg_shopper_db:
+  build_react:
