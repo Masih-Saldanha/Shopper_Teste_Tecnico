@@ -12,5 +12,10 @@ export function errorHandler(
 
     const errorThrow = errorType(error);
 
-    return res.status(errorThrow.status).send(errorThrow.message);
+    const errorBody = {
+        error_code: "INVALID_DATA",
+        error_description: errorThrow.message
+    };
+
+    return res.status(errorThrow.status).send(errorBody);
 };

@@ -6,17 +6,18 @@ export function validateSchema(schema : Schema) {
         const schemaValidation = schema.validate(req.body, { abortEarly: false });
 
         if (schemaValidation.error) {
-            const message = schemaValidation.error.details.map((error) => {
+            let message = "";
+            schemaValidation.error.details.forEach((error) => {
                 if (error.context?.message) {
-                    console.error(error.context.message);
-                    return error.context.message;
+                    console.error("error.context.message: ", error.context.message);
+                    message += error.context.message + "\n";
                 } else {
-                    console.error(error.message);
-                    return error.message;
+                    console.error("error.message: ", error.message);
+                    message += error.message + "\n";
                 }
             });
             throw {
-                type: "Not Acceptable",
+                type: "Bad Request",
                 message
             };
         };

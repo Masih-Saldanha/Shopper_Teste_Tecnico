@@ -9,6 +9,7 @@ async function estimateRide(estimateRideData: SendEstimateRide) {
     const destination = estimateRideData.destination;
 
     const originResponse = await returnAxiosRequisition.getCordinates(origin);
+    throwError(!!originResponse.data.error_message, "Bad Request", originResponse.data.error_message)
     const originData = originResponse.data.results[0].geometry.location;
     const originCoordinates = {
       latitude: originData.lat,
@@ -59,13 +60,13 @@ async function estimateRide(estimateRideData: SendEstimateRide) {
     return result;
 
   } catch (error: any) {
-    console.error(error);
-    if (error.code === 400) {
-      throwError(true, "Bad Request", error.message);
-    } else if (error.code === 403) {
-      throwError(true, "Forbidden", error.message);
+    console.error("error: ", error.response.data);
+    if (error.type) {
+      throwError(true, error.type, error.message);
+    } else if (error.response.data.error.message) {
+        throwError(true, "Bad Request", error.response.data.error.message)
     } else {
-      throwError(error.response.status, error.response.statusText, error.response.data.error);
+      throwError(true, "Bad Request", "Erro na estimativa")
     }
   }
 }
