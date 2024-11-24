@@ -17,7 +17,7 @@
     "test:integration": "jest -i --coverage --testPathPattern=tests/integration"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "node dist/prisma/seed.js"
   },
   "keywords": [],
   "author": "",

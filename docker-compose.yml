@@ -6,28 +6,34 @@ services:
     ports:
       - 4457:5432
     env_file:
-      - ./.env
+      - ./backend/.env.docker
     volumes:
       - pg_shopper_db:/var/lib/postgresql/data
+    networks:
+      - app_network
 
-  node_shopper_db:
-    container_name: node_shopper_db
-    build: ./back-end
+  node_shopper:
+    container_name: node_shopper
+    build: 
+      context: ./backend
     ports:
       - 5000:5000
     depends_on:
       - postgres_shopper_db
     env_file:
-      - ./.env
+      - .env
+      - ./backend/.env.docker
+    networks:
+      - app_network
 
   react_shopper_app:
     container_name: react_shopper_app
     build: 
-      context: ./front-end
-      args:
-        REACT_APP_BASE_URL: ${REACT_APP_BASE_URL}
+      context: ./frontend
     volumes:
       - build_react:/var/www/html
+    networks:
+      - app_network
 
   nginx_shopper_app:
     container_name: nginx_shopper_app
@@ -38,9 +44,14 @@ services:
       - build_react:/var/www/html
     depends_on:
       - postgres_shopper_db
-      - node_shopper_db
+      - node_shopper
       - react_shopper_app
+    networks:
+      - app_network
 
 volumes:
   pg_shopper_db:
   build_react:
+
+networks:
+  app_network:

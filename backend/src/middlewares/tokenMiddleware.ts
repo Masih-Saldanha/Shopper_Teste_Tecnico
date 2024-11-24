@@ -13,9 +13,13 @@ export interface TokenData {
 export async function validateToken(req: Request, res: Response, next: NextFunction) {
     const { authorization } = req.headers;
     const token = authorization?.replace("Bearer ", "").trim();
-    throwError(!token, "Unauthorized", `Token not sent`);
 
-    const userDataFromToken = jwt.verify(token, process.env.JWT_TOKEN, function (err, decoded) {
+    if (!token) {
+        throwError(!token, "Unauthorized", `Token not sent`);
+        return;
+    }
+
+    const userDataFromToken = jwt.verify(token, process.env.JWT_TOKEN as string, function (err, decoded) {
         if (err) throwError(true, "Unauthorized", `The token sent isn't valid`);
         else return decoded;
     });

@@ -7,7 +7,7 @@ COPY . .
 RUN npm i
 
 ARG REACT_APP_BASE_URL
-ENV REACT_APP_BASE_URL=$REACT_APP_BASE_URL
+ENV REACT_APP_BASE_URL=http://localhost:5000
 
 RUN npm run build
 
