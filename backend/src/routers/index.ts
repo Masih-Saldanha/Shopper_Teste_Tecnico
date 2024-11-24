@@ -1,11 +1,11 @@
 import { Router } from "express";
 
 import healthRouter from "./healthRouter.js";
-// import exampleRouter from "./exampleRouter.js";
+import rideRouter from "./rideRouter.js";
 
 const router = Router();
 
 router.use(healthRouter);
-// router.use(exampleRouter);
+router.use(rideRouter);
 
 export default router;

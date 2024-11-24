@@ -6,15 +6,21 @@ generator client {
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Users {
-  id   Int    @id @default(autoincrement())
-  name String
+model Drivers {
+  id        Int    @id @default(autoincrement())
+  nome      String @unique
+  descricao String
+  carro     String
+  pontuacao Int
+  avaliacao String
+  taxa      Float
+  kmMinimo  Int
 
-  @@map("users")
+  @@map("drivers")
 }
 
 // // model relation example:

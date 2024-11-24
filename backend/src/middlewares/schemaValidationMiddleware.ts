@@ -7,8 +7,13 @@ export function validateSchema(schema : Schema) {
 
         if (schemaValidation.error) {
             const message = schemaValidation.error.details.map((error) => {
-                console.error(error.message);
-                return error.message;
+                if (error.context?.message) {
+                    console.error(error.context.message);
+                    return error.context.message;
+                } else {
+                    console.error(error.message);
+                    return error.message;
+                }
             });
             throw {
                 type: "Not Acceptable",
