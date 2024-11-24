@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "jsx": "react",
+      "esModuleInterop": true,
+      "module": "es2020",
+      "moduleResolution": "node",
+      "outDir": "dist",
+      "target": "ES2017",
+      "strict": true
+    },
+    "ts-node": {
+      "esm": true
+    }
+  }

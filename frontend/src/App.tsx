@@ -1,9 +1,9 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import GeneralContext from "./contexts/generalContext";
 import ErrorPage from "./pages/ErrorPage";
-import Main from "./pages/Main";
+import HealthPage from "./pages/HealthPage";
 
 function App() {
   const contextValue = useMemo(() => ({
@@ -16,7 +16,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/*" element={<ErrorPage />}></Route>
-          <Route path="/" element={<Main />}></Route>
+          <Route path="/health" element={<HealthPage />}></Route>
+          <Route path="/" element={<HealthPage />}></Route>
         </Routes>
       </BrowserRouter>
     </GeneralContext.Provider>

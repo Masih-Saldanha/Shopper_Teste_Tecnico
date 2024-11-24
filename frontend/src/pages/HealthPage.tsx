@@ -1,13 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import styled from "styled-components";
 
 import Loading from "../components/Loading";
 import GeneralContext from "../contexts/generalContext";
 import networkRequests from "../actions/networkRequests";
-import styled from "styled-components";
 
-function Main() {
+const HealthPage: React.FC = () => {
   const general = useContext(GeneralContext);
-  const { global, teste } = general;
+  const { global, teste } = general || { global: "", teste: "" };
   const [health, setHealth] = useState("Sem resposta ainda");
 
   useEffect(() => {
@@ -40,4 +40,4 @@ const Message = styled.h2`
     color: #6D6D6D;
 `
 
-export default Main;
+export default HealthPage;

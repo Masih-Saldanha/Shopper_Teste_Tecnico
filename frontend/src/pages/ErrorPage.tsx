@@ -1,12 +1,15 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Loading from "../components/Loading";
 
-function ErrorPage() {
+const ErrorPage: React.FC = () => {
   const navigate = useNavigate();
 
-  useEffect(() => navigate("/"), []);
+  useEffect(() => {
+    const redirect = () => navigate("/health");
+    redirect();
+  }, []);
 
   return <Loading message="Essa página não existe, redirecionando você para a página inicial"></Loading>
 }

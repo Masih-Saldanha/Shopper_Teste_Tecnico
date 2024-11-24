@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm i
+RUN npm i --force
 
 ARG REACT_APP_BASE_URL
 ENV REACT_APP_BASE_URL=http://localhost:5000

@@ -1,7 +1,8 @@
+import React from "react";
 import { Oval } from "react-loader-spinner";
 import styled from "styled-components";
 
-function Loading(props) {
+function Loading(props: { message: any; }) {
   const { message } = props;
 
   return (
