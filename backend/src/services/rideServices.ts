@@ -1,3 +1,5 @@
+import { Drivers, Rides } from "@prisma/client";
+
 import returnAxiosRequisition from "../helpers/returnAxiosRequisition.js";
 import driverRepository from "../repositories/driverRepository.js";
 import rideRepository from "../repositories/rideRepository.js";
@@ -10,7 +12,7 @@ async function estimateRide(estimateRideData: SendEstimateRide) {
     const destination = estimateRideData.destination;
 
     const originResponse = await returnAxiosRequisition.getCordinates(origin);
-    throwError(!!originResponse.data.error_message, "Bad Request", originResponse.data.error_message)
+    throwError(!!originResponse.data.error_message, "Bad Request", originResponse.data.error_message);
     const originData = originResponse.data.results[0].geometry.location;
     const originCoordinates = {
       latitude: originData.lat,
@@ -98,9 +100,54 @@ async function confirmRide(confirmRideData: SendRideConfirm) {
   return { success: true }
 }
 
+async function getRidesListByCustomerIdAndDriverId(customer_id: string, driver_id: string | undefined) {
+  const isCustomerInvalid = !customer_id
+    || typeof customer_id !== "string"
+    || customer_id.trim() === "";
+  throwError(isCustomerInvalid, "Bad Request", "Usuario invalido");
+
+  let ridesFound: (Rides & { drivers: Drivers })[];
+  if (driver_id) {
+    const isNumeric = /^\d+$/.test(driver_id);
+    const driver_id_number = parseInt(driver_id, 10);
+    const isDriverIdInvalid = !isNumeric || isNaN(driver_id_number) || driver_id_number <= 0;
+    throwError(isDriverIdInvalid, "Bad Request", "Motorista invalido");
+
+    ridesFound = await rideRepository.getRidesListByCustomerIdAndDriverId(customer_id, driver_id_number);
+    throwError(ridesFound.length < 1, "Not Found", "Nenhum registro encontrado para esse motorista");
+  } else {
+    ridesFound = await rideRepository.getRidesListByCustomerId(customer_id);
+    throwError(ridesFound.length < 1, "Not Found", "Nenhum registro encontrado");
+  }
+
+  const rides = ridesFound.map(ride => {
+    return {
+      id: ride.id,
+      date: ride.date,
+      origin: ride.origin,
+      destination: ride.destination,
+      distance: ride.distance,
+      duration: ride.duration,
+      driver: {
+        id: ride.drivers.id,
+        name: ride.drivers.nome,
+      },
+      value: ride.value,
+    };
+  });
+
+  const result = {
+    customer_id,
+    rides
+  };
+
+  return result;
+}
+
 const rideService = {
   estimateRide,
   confirmRide,
+  getRidesListByCustomerIdAndDriverId,
 };
 
 export default rideService;
