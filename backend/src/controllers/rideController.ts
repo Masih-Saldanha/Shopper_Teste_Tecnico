@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { SendEstimateRide } from "../schemas/rideSchema.js";
+
+import { SendEstimateRide, SendRideConfirm } from "../schemas/rideSchema.js";
 import rideService from "../services/rideServices.js";
 
 async function estimateRide(req: Request, res: Response) {
@@ -11,20 +12,11 @@ async function estimateRide(req: Request, res: Response) {
 };
 
 async function confirmRide(req: Request, res: Response) {
-//   Request Body
-// {
-//  "customer_id": string,
-//  "origin": string,
-//  "destination": string,
-//  "distance": number,
-//  "duration": string,
-//  "driver": {
-//  "id": number,
-//  "name": string
-//  },
-//  "value": number
-// }
-  res.send("OK").status(200);
+  const body: SendRideConfirm = req.body;
+  
+  const result = await rideService.confirmRide(body);
+
+  res.status(200).json(result);
 };
 
 async function getCustomerData(req: Request, res: Response) {

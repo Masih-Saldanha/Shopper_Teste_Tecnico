@@ -11,50 +11,29 @@ datasource db {
 }
 
 model Drivers {
-  id        Int    @id @default(autoincrement())
-  nome      String @unique
+  id        Int     @id @default(autoincrement())
+  nome      String  @unique
   descricao String
   carro     String
   pontuacao Int
   avaliacao String
   taxa      Float
   kmMinimo  Int
+  rides     Rides[]
 
   @@map("drivers")
 }
 
-// // model relation example:
+model Rides {
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  origin      String
+  destination String
+  distance    Float
+  duration    String
+  driverId    Int
+  drivers     Drivers  @relation(fields: [driverId], references: [id])
+  value       Float
 
-// model Users {
-//   id       Int     @id @default(autoincrement())
-//   email    String  @unique
-//   password String
-//   cards    Cards[]
-
-//   @@map("users")
-// }
-
-// model Cards {
-//   id             Int     @id @default(autoincrement())
-//   title          String
-//   number         String
-//   name           String
-//   securityCode   String
-//   expirationDate String
-//   password       String
-//   isVirtual      Boolean
-//   type           Card
-//   userId         Int
-//   users          Users   @relation(fields: [userId], references: [id])
-
-//   @@unique([userId, title])
-//   @@map("cards")
-// }
-
-// // enum example:
-
-// enum Card {
-//   credit
-//   debit
-//   both
-// }
+  @@map("rides")
+}

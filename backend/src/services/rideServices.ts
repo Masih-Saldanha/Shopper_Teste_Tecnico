@@ -1,6 +1,7 @@
 import returnAxiosRequisition from "../helpers/returnAxiosRequisition.js";
 import driverRepository from "../repositories/driverRepository.js";
-import { SendEstimateRide } from "../schemas/rideSchema.js";
+import rideRepository from "../repositories/rideRepository.js";
+import { SendEstimateRide, SendRideConfirm } from "../schemas/rideSchema.js";
 import { throwError } from "../utils/errorTypeUtils.js";
 
 async function estimateRide(estimateRideData: SendEstimateRide) {
@@ -30,7 +31,7 @@ async function estimateRide(estimateRideData: SendEstimateRide) {
     const distanceInKmRounded = parseFloat(distanceInKm.toFixed(3));
 
     const durationinSeconds: string = calculateDistance.routes[0].duration;
-    
+
     const drivers = await driverRepository.findAll();
     const validDrivers = drivers.filter(driver => driver.kmMinimo < distanceInKmRounded)
     const options = validDrivers.map(driver => {
@@ -64,15 +65,41 @@ async function estimateRide(estimateRideData: SendEstimateRide) {
     if (error.type) {
       throwError(true, error.type, error.message);
     } else if (error.response.data.error.message) {
-        throwError(true, "Bad Request", error.response.data.error.message)
+      throwError(true, "Bad Request", error.response.data.error.message)
     } else {
       throwError(true, "Bad Request", "Erro na estimativa")
     }
   }
+};
+
+async function confirmRide(confirmRideData: SendRideConfirm) {
+  const driver = await driverRepository.findById(confirmRideData.driver.id);
+  throwError(!driver, "Not Found", "Motorista não encontrado");
+  if (driver) {
+    throwError(
+      confirmRideData.distance < driver.kmMinimo,
+      "Not Acceptable",
+      "Quilometragem inválida para o motorista"
+    );
+  }
+
+  const data = {
+    date: new Date(),
+    origin: confirmRideData.origin,
+    destination: confirmRideData.destination,
+    distance: confirmRideData.distance,
+    duration: confirmRideData.duration,
+    driverId: confirmRideData.driver.id,
+    value: confirmRideData.value,
+  }
+  rideRepository.saveRide(data);
+
+  return { success: true }
 }
 
 const rideService = {
   estimateRide,
+  confirmRide,
 };
 
 export default rideService;

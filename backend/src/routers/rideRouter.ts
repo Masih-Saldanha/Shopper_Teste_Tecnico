@@ -7,7 +7,7 @@ import rideSchema from "../schemas/rideSchema.js";
 const rideRouter = Router();
 
 rideRouter.post("/ride/estimate", validateSchema(rideSchema.sendEstimateRideData), rideController.estimateRide);
-rideRouter.patch("/ride/confirm", rideController.confirmRide);
+rideRouter.patch("/ride/confirm", validateSchema(rideSchema.sendRideConfirmData), rideController.confirmRide);
 rideRouter.get("/ride/:customer_id", rideController.getCustomerData);
 
 export default rideRouter;
