@@ -26,6 +26,7 @@ model Drivers {
 
 model Rides {
   id          Int      @id @default(autoincrement())
+  customerId  String
   date        DateTime
   origin      String
   destination String

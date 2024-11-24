@@ -84,6 +84,7 @@ async function confirmRide(confirmRideData: SendRideConfirm) {
   }
 
   const data = {
+    customerId: confirmRideData.customer_id,
     date: new Date(),
     origin: confirmRideData.origin,
     destination: confirmRideData.destination,

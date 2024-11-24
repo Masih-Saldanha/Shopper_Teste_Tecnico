@@ -1,6 +1,7 @@
 -- CreateTable
 CREATE TABLE "rides" (
     "id" SERIAL NOT NULL,
+    "customerId" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "origin" TEXT NOT NULL,
     "destination" TEXT NOT NULL,
