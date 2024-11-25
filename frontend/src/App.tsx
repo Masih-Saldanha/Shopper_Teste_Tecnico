@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import GeneralContext, { Driver, EstimateRideData } from "./contexts/generalContext";
+import GeneralContext, { Driver, DriverFromDatabase, EstimateRideData } from "./contexts/generalContext";
 import ErrorPage from "./pages/ErrorPage";
 import HealthPage from "./pages/HealthPage";
 import RequestRidePage from "./pages/RequestRidePage";
@@ -15,14 +15,17 @@ function App() {
   const [estimateRideData, setEstimateRideData] = useState<EstimateRideData | null>(null);
   const [driversList, setDriversList] = useState<Driver[]>([]);
   const [urlSafePolyline, setUrlSafePolyline] = useState<string>("");
+  const [driversListFromDatabase, setDriversListFromDatabase] = useState<DriverFromDatabase[]>([]);
 
   const contextValue = useMemo(() => ({
     global: "Contexto Global",
     teste: "Teste",
     customerId, setCustomerId, origin, setOrigin,
     destination, setDestination, estimateRideData, setEstimateRideData,
-    driversList, setDriversList, urlSafePolyline, setUrlSafePolyline
-  }), [customerId, origin, destination, estimateRideData, driversList, urlSafePolyline]);
+    driversList, setDriversList, urlSafePolyline, setUrlSafePolyline,
+    driversListFromDatabase, setDriversListFromDatabase
+  }), [customerId, origin, destination, estimateRideData, driversList,
+    urlSafePolyline, driversListFromDatabase]);
 
   return (
     <GeneralContext.Provider value={contextValue}>

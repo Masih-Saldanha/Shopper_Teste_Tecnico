@@ -15,6 +15,8 @@ export type GeneralContextType = {
   setDriversList: React.Dispatch<React.SetStateAction<Driver[]>>;
   urlSafePolyline: string;
   setUrlSafePolyline: React.Dispatch<React.SetStateAction<string>>;
+  driversListFromDatabase: DriverFromDatabase[];
+  setDriversListFromDatabase: React.Dispatch<React.SetStateAction<DriverFromDatabase[]>>;
 };
 
 export type EstimateRideData = {
@@ -49,17 +51,42 @@ export type Driver = {
   value: number
 }
 
+export type DriverFromDatabase = {
+  id: number;
+  nome: string;
+  descricao: string;
+  carro: string;
+  pontuacao: number;
+  avaliacao: string;
+  taxa: number;
+  kmMinimo: number;
+}
+
 export type BodyConfirmRide = {
-    customer_id: string;
-    origin: string;
-    destination: string;
-    distance: number | undefined;
-    duration: string | undefined;
-    driver: {
-        id: number;
-        name: string;
-    };
-    value: number;
+  customer_id: string;
+  origin: string;
+  destination: string;
+  distance: number | undefined;
+  duration: string | undefined;
+  driver: {
+    id: number;
+    name: string;
+  };
+  value: number;
+}
+
+export type Ride = {
+  id: number;
+  date: string;
+  destination: string;
+  distance: number;
+  driver: {
+    id: number;
+    name: string;
+  }
+  duration: string;
+  origin: string;
+  value: number;
 }
 
 export type GetEncodedPolyline = {

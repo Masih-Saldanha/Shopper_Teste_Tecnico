@@ -20,8 +20,8 @@ const HealthPage: React.FC = () => {
         setHealth(response.data);
       })
       .catch((e) => {
-        console.log("erro: ");
-        console.log(e);
+        console.error("erro: ", e);
+        alert(e.response.data.error_description);
       })
   }, []);
 

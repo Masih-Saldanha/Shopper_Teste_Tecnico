@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import rideService from "../services/rideService";
 import GeneralContext, { BodyConfirmRide } from "../contexts/generalContext";
+import driverService from "../services/driverService";
 
 const RideOptionsPage: React.FC = () => {
   const general = useContext(GeneralContext);
@@ -12,6 +13,7 @@ const RideOptionsPage: React.FC = () => {
     estimateRideData, setEstimateRideData,
     driversList, setDriversList,
     urlSafePolyline, setUrlSafePolyline,
+    driversListFromDatabase, setDriversListFromDatabase,
   } = general || {
     customerId: "", setCustomerId: () => { },
     origin: "", setOrigin: () => { },
@@ -19,6 +21,7 @@ const RideOptionsPage: React.FC = () => {
     estimateRideData: null, setEstimateRideData: () => { },
     driversList: [], setDriversList: () => { },
     urlSafePolyline: "", setUrlSafePolyline: () => { },
+    driversListFromDatabase: [], setDriversListFromDatabase: () => { },
   };
   const navigate = useNavigate();
 
@@ -41,10 +44,15 @@ const RideOptionsPage: React.FC = () => {
       };
       await rideService.confirmRide(body);
       console.log("Percurso registrado");
+
+      const driverListFromDatabase = await driverService.getDriversListFromDatabase();
+      console.log("driverListFromDatabase: ", driverListFromDatabase);
+      setDriversListFromDatabase(driverListFromDatabase.data);
+      
       navigate("/ride-history");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Erro ao confirmar a viagem. Tente novamente.");
+      alert(err.response.data.error_description);
     }
   };
 

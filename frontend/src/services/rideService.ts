@@ -13,8 +13,8 @@ function confirmRide(body: BodyConfirmRide) {
 };
 
 function getRideHistory(userId: string, driverId?: number) {
-    const params = driverId ? { userId, driverId } : { userId };
-    return axios.get(`${BASE_URL}/ride/history`, { params });
+  const params = driverId ? { driver_id: driverId } : {};
+  return axios.get(`${BASE_URL}/ride/${userId}`, { params });
 };
 
 function getEncodedPolylineData(body: GetEncodedPolyline) {

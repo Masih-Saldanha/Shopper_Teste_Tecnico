@@ -14,6 +14,7 @@ const RequestRidePage: React.FC = () => {
     estimateRideData, setEstimateRideData,
     driversList, setDriversList,
     urlSafePolyline, setUrlSafePolyline,
+    driversListFromDatabase, setDriversListFromDatabase,
   } = general || {
     customerId: "", setCustomerId: () => { },
     origin: "", setOrigin: () => { },
@@ -21,6 +22,7 @@ const RequestRidePage: React.FC = () => {
     estimateRideData: null, setEstimateRideData: () => { },
     driversList: [], setDriversList: () => { },
     urlSafePolyline: "", setUrlSafePolyline: () => { },
+    driversListFromDatabase: [], setDriversListFromDatabase: () => { },
   };
 
   const [error, setError] = useState<string | null>(null);
@@ -42,10 +44,10 @@ const RequestRidePage: React.FC = () => {
       setUrlSafePolyline(responseEncodedPolylineData.data);
 
       navigate("/ride-options");
-    } catch (err) {
-      console.error("erro: ");
-      console.error(err);
-      setError("Erro ao estimar a viagem. Tente novamente.");
+    } catch (err: any) {
+      console.error("erro: ", err);
+      setError(err.response.data.error_description);
+      alert(err.response.data.error_description);
     }
   };
 
