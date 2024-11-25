@@ -8,6 +8,7 @@ const rideRouter = Router();
 
 rideRouter.post("/ride/estimate", validateSchema(rideSchema.sendEstimateRideData), rideController.estimateRide);
 rideRouter.patch("/ride/confirm", validateSchema(rideSchema.sendRideConfirmData), rideController.confirmRide);
-rideRouter.get("/ride/:customer_id", rideController.getCustomerData);
+rideRouter.get("/ride/:customer_id", rideController.getRideHistory);
+rideRouter.post("/ride/encodedpolyline", validateSchema(rideSchema.getEncodedPolylineData), rideController.getEncodedPolylineData);
 
 export default rideRouter;

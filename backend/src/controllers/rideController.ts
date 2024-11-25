@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { SendEstimateRide, SendRideConfirm } from "../schemas/rideSchema.js";
+import { GetEncodedPolyline, SendEstimateRide, SendRideConfirm } from "../schemas/rideSchema.js";
 import rideService from "../services/rideServices.js";
 
 async function estimateRide(req: Request, res: Response) {
@@ -19,7 +19,7 @@ async function confirmRide(req: Request, res: Response) {
   res.status(200).json(result);
 };
 
-async function getCustomerData(req: Request, res: Response) {
+async function getRideHistory(req: Request, res: Response) {
   const { customer_id } = req.params;
   const { driver_id }: { driver_id?: string } = req.query;
 
@@ -28,10 +28,19 @@ async function getCustomerData(req: Request, res: Response) {
   res.status(200).json(result);
 };
 
+async function getEncodedPolylineData(req: Request, res: Response) {
+  const body: GetEncodedPolyline = req.body;
+
+  const result = await rideService.getEncodedPolylineData(body);
+
+  res.status(200).json(result);
+};
+
 const rideController = {
   estimateRide,
   confirmRide,
-  getCustomerData
+  getRideHistory,
+  getEncodedPolylineData
 };
 
 export default rideController;

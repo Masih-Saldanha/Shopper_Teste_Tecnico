@@ -104,9 +104,57 @@ const sendRideConfirmData = Joi.object<SendRideConfirm>({
     return value;
   });
 
+export type GetEncodedPolyline = {
+  origin: { latitude: number; longitude: number; };
+  destination: { latitude: number; longitude: number; };
+};
+
+const getEncodedPolylineData = Joi.object<GetEncodedPolyline>({
+  origin: Joi.object({
+    latitude: Joi.number().required().messages({
+      "any.required": "A latitude de origem é obrigatória.",
+      "number.base": "A latitude de origem deve ser um número.",
+    }),
+    longitude: Joi.number().required().messages({
+      "any.required": "A longitude de origem é obrigatória.",
+      "number.base": "A longitude de origem deve ser um número.",
+    }),
+  }).required().messages({
+    "any.required": "As coordenada de origem são obrigatórias.",
+  }),
+  destination: Joi.object({
+    latitude: Joi.number().required().messages({
+      "any.required": "A latitude de destino é obrigatória.",
+      "number.base": "A latitude de destino deve ser um número.",
+    }),
+    longitude: Joi.number().required().messages({
+      "any.required": "A longitude de destino é obrigatória.",
+      "number.base": "A longitude de destino deve ser um número.",
+    }),
+  }).required().messages({
+    "any.required": "As coordenada de destino são obrigatórias.",
+  }),
+})
+  .unknown(false)
+  .messages({
+    "object.unknown": "A propriedade {#label} não é permitida.",
+  })
+  .custom((value, helpers) => {
+    if (
+      value.origin.latitude === value.destination.latitude
+      && value.origin.longitude === value.destination.longitude
+    ) {
+      return helpers.error("any.custom", {
+        message: "As coordenadas de origem e destino não podem ser iguais.",
+      });
+    }
+    return value;
+  });
+
 const rideSchema = {
   sendEstimateRideData,
   sendRideConfirmData,
+  getEncodedPolylineData,
 };
 
 export default rideSchema;

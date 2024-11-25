@@ -7,7 +7,7 @@ const ErrorPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const redirect = () => navigate("/health");
+    const redirect = () => navigate("/");
     redirect();
   }, []);
 

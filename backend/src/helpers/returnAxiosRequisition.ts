@@ -23,7 +23,7 @@ function calculateDistance(
   const headers = {
     "Content-Type": "application/json",
     "X-Goog-Api-Key": apiKey,
-    "X-Goog-FieldMask": "routes.duration,routes.distanceMeters",
+    "X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline"
   };
 
   const data = {
