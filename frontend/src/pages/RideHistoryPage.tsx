@@ -28,6 +28,7 @@ const RideHistoryPage: React.FC = () => {
       const response = await rideService.getRideHistory(userId, driverId ? parseInt(driverId) : undefined);
       setRides(response.data.rides);
     } catch (err: any) {
+      setRides([]);
       alert(err.response.data.error_description);
     }
   };
@@ -55,43 +56,54 @@ const RideHistoryPage: React.FC = () => {
       </FilterContainer>
 
       <RideList>
-        {rides.map((ride) => (
-          <RideCard key={ride.id}>
-            <RideInfo>
-              <strong>Data:</strong> {formatUtils.formatDate(ride.date)}
-            </RideInfo>
-            <RideInfo>
-              <strong>Motorista:</strong> {ride.driver.name}
-            </RideInfo>
-            <RideInfo>
-              <strong>Origem:</strong> {ride.origin}
-            </RideInfo>
-            <RideInfo>
-              <strong>Destino:</strong> {ride.destination}
-            </RideInfo>
-            <RideInfo>
-              <strong>Distância:</strong> {formatUtils.formatDistance(ride.distance)}
-            </RideInfo>
-            <RideInfo>
-              <strong>Tempo de viagem:</strong> {formatUtils.formatDuration(ride.duration)}
-            </RideInfo>
-            <RideInfo>
-              <strong>Valor:</strong> {formatUtils.formatValue(ride.value)}
-            </RideInfo>
-          </RideCard>
-        ))}
+        {rides.length > 0 ? (
+          rides.map((ride) => (
+            <RideCard key={ride.id}>
+              <RideInfo>
+                <strong>Data e hora da viagem:</strong> {formatUtils.formatDate(ride.date)}
+              </RideInfo>
+              <RideInfo>
+                <strong>Nome do motorista:</strong> {ride.driver.name}
+              </RideInfo>
+              <RideInfo>
+                <strong>Origem:</strong> {ride.origin}
+              </RideInfo>
+              <RideInfo>
+                <strong>Destino:</strong> {ride.destination}
+              </RideInfo>
+              <RideInfo>
+                <strong>Distância percorrida:</strong> {formatUtils.formatDistance(ride.distance)}
+              </RideInfo>
+              <RideInfo>
+                <strong>Tempo de viagem:</strong> {formatUtils.formatDuration(ride.duration)}
+              </RideInfo>
+              <RideInfo>
+                <strong>Valor da viagem:</strong> {formatUtils.formatValue(ride.value)}
+              </RideInfo>
+            </RideCard>
+          ))
+        ) : (
+          <NoHistoryContainer>
+            <NoHistoryMessage>Faça uma busca para exibir o histórico</NoHistoryMessage>
+          </NoHistoryContainer>
+        )}
       </RideList>
+
     </Container>
   );
 };
 
 const Container = styled.div`
+  h1 {
+    text-align: center;
+  }
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
 `;
 
 const FilterContainer = styled.div`
+  justify-content: center;
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -136,6 +148,25 @@ const RideInfo = styled.p`
   strong {
     font-weight: 600;
   }
+`;
+
+const NoHistoryContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  text-align: center;
+`;
+
+const NoHistoryMessage = styled.div`
+  font-size: 18px;
+  font-weight: bold;
+  color: #6c757d;
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export default RideHistoryPage;

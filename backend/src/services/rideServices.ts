@@ -12,7 +12,11 @@ async function estimateRide(estimateRideData: SendEstimateRide) {
     const destination = estimateRideData.destination;
 
     const originResponse = await returnAxiosRequisition.getCordinates(origin);
-    throwError(!!originResponse.data.error_message, "Bad Request", originResponse.data.error_message);
+    throwError(
+      originResponse.data.results.length < 1,
+      "Bad Request",
+      "Endereço de origem não localizado, tente enviar um endereço válido"
+    );
     const originData = originResponse.data.results[0].geometry.location;
     const originCoordinates = {
       latitude: originData.lat,
@@ -20,6 +24,11 @@ async function estimateRide(estimateRideData: SendEstimateRide) {
     };
 
     const destinationResponse = await returnAxiosRequisition.getCordinates(destination);
+    throwError(
+      destinationResponse.data.results.length < 1,
+      "Bad Request",
+      "Endereço de destino não localizado, tente enviar um endereço válido"
+    );
     const destinationData = destinationResponse.data.results[0].geometry.location;
     const destinationCoordinates = {
       latitude: destinationData.lat,
@@ -28,7 +37,7 @@ async function estimateRide(estimateRideData: SendEstimateRide) {
 
     const calculateDistanceResponse = await returnAxiosRequisition.calculateDistance(originCoordinates, destinationCoordinates);
     const calculateDistance = calculateDistanceResponse.data;
-    throwError(!calculateDistance.routes, "Bad Request", "Rota impossível");
+    throwError(!calculateDistance.routes, "Bad Request", "Rota impossível, use endereços possíveis de se viajar de carro");
 
     const distanceInKm = calculateDistance.routes[0].distanceMeters / 1000;
     const distanceInKmRounded = parseFloat(distanceInKm.toFixed(3));
@@ -109,10 +118,11 @@ async function confirmRide(confirmRideData: SendRideConfirm) {
 }
 
 async function getRidesListByCustomerIdAndDriverId(customer_id: string, driver_id: string | undefined) {
-  const isCustomerInvalid = !customer_id
+  const isCustomerInvalid =
+    !customer_id
     || typeof customer_id !== "string"
     || customer_id.trim() === "";
-  throwError(isCustomerInvalid, "Bad Request", "Usuario invalido");
+  throwError(isCustomerInvalid, "Bad Request", "Usuario inválido");
 
   let ridesFound: (Rides & { drivers: Drivers })[] = await rideRepository.getRidesListByCustomerId(customer_id);
   throwError(ridesFound.length < 1, "Not Found", "Esse usuário ainda não solicitou uma viagem");
@@ -120,7 +130,7 @@ async function getRidesListByCustomerIdAndDriverId(customer_id: string, driver_i
     const isNumeric = /^\d+$/.test(driver_id);
     const driver_id_number = parseInt(driver_id, 10);
     const isDriverIdInvalid = !isNumeric || isNaN(driver_id_number) || driver_id_number <= 0;
-    throwError(isDriverIdInvalid, "Bad Request", "Motorista invalido");
+    throwError(isDriverIdInvalid, "Bad Request", "Motorista inválido");
 
     ridesFound = ridesFound.filter(ride => ride.driverId === driver_id_number)
     throwError(ridesFound.length < 1, "Not Found", "Nenhum registro encontrado para esse motorista");
@@ -163,7 +173,7 @@ async function getEncodedPolylineData(getEncodedPolyline: GetEncodedPolyline) {
     } else if (error.response.data.error.message) {
       throwError(true, "Bad Request", error.response.data.error.message)
     } else {
-      throwError(true, "Bad Request", "Erro na estimativa")
+      throwError(true, "Bad Request", "Erro na geração das coordenadas para geração do mapa")
     }
   }
 }

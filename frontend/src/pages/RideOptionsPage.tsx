@@ -51,40 +51,56 @@ const RideOptionsPage: React.FC = () => {
           alt="Mapa"
         />
       </MapContainer>
-      <Table>
-        <TableHead>
-          <tr>
-            <TableHeaderCell>Nome</TableHeaderCell>
-            <TableHeaderCell>Descrição</TableHeaderCell>
-            <TableHeaderCell>Carro</TableHeaderCell>
-            <TableHeaderCell>Avaliação</TableHeaderCell>
-            <TableHeaderCell>Valor (R$)</TableHeaderCell>
-            <TableHeaderCell>Ações</TableHeaderCell>
-          </tr>
-        </TableHead>
-        <tbody>
-          {driversList.map((driver) => (
-            <TableRow key={driver.id}>
-              <TableCell>{driver.name}</TableCell>
-              <TableCell>{driver.description}</TableCell>
-              <TableCell>{driver.vehicle}</TableCell>
-              <TableCell>
-                {driver.review.rating}/5
-                <br />
-                <small>{driver.review.comment}</small>
-              </TableCell>
-              <TableCellValue>{formatUtils.formatValue(driver.value)}</TableCellValue>
-              <TableCell>
-                <Button
-                  onClick={() => handleSelectDriver(driver.id, driver.name, driver.value)}
-                >
-                  Escolher {driver.name}
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </tbody>
-      </Table>
+      {
+        driversList.length > 0 ? (
+          <>
+            <Table>
+              <TableHead>
+                <tr>
+                  <TableHeaderCell>Nome</TableHeaderCell>
+                  <TableHeaderCell>Descrição</TableHeaderCell>
+                  <TableHeaderCell>Veículo</TableHeaderCell>
+                  <TableHeaderCell>Avaliação</TableHeaderCell>
+                  <TableHeaderCell>Valor da viagem</TableHeaderCell>
+                  <TableHeaderCell>Ação</TableHeaderCell>
+                </tr>
+              </TableHead>
+              <tbody>
+                {driversList.map((driver) => (
+                  <TableRow key={driver.id}>
+                    <TableCell>{driver.name}</TableCell>
+                    <TableCell>{driver.description}</TableCell>
+                    <TableCell>{driver.vehicle}</TableCell>
+                    <TableCell>
+                      {driver.review.rating}/5
+                      <br />
+                      <small>{driver.review.comment}</small>
+                    </TableCell>
+                    <TableCell>{formatUtils.formatValue(driver.value)}</TableCell>
+                    <TableCell>
+                      <Button
+                        onClick={() =>
+                          handleSelectDriver(driver.id, driver.name, driver.value)
+                        }
+                      >
+                        Escolher {driver.name}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </tbody>
+            </Table>
+          </>
+        ) : (
+          <NoDriversContainer>
+            <NoDriversMessage>
+              Nenhum motorista disponível para essa corrida no momento.
+              Pontos de origem e destino muito próximos.
+            </NoDriversMessage>
+          </NoDriversContainer>
+        )
+      }
+
     </Container>
   );
 
@@ -142,12 +158,6 @@ const TableCell = styled.td`
   border: 1px solid #ddd;
 `;
 
-const TableCellValue = styled.td`
-  white-space: nowrap;
-  padding: 10px;
-  border: 1px solid #ddd;
-`;
-
 const Button = styled.button`
   padding: 8px 12px;
   background-color: #007bff;
@@ -159,6 +169,24 @@ const Button = styled.button`
   &:hover {
     background-color: #0056b3;
   }
+`;
+
+const NoDriversContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
+
+const NoDriversMessage = styled.div`
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff4d4d;
+  background-color: #fff5f5;
+  border: 1px solid #ffcccc;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export default RideOptionsPage;

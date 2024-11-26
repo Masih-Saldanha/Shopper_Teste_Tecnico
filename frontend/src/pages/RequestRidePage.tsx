@@ -38,6 +38,9 @@ const RequestRidePage: React.FC = () => {
 
       navigate("/ride-options");
     } catch (err: any) {
+      setEstimateRideData(null);
+      setDriversList([]);
+      setUrlSafePolyline("");
       alert(err.response.data.error_description);
     }
   };
