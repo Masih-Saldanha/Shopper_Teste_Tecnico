@@ -203,7 +203,7 @@ const ErrorMessage = styled.div`
   border-radius: 4px;
   padding: 10px;
   text-align: center;
-  font-size: 14px;
+  font-size: 30px;
 `;
 
 export default RideHistoryPage;

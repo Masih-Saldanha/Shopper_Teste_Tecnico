@@ -21,6 +21,7 @@ const RideOptionsPage: React.FC = () => {
   };
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   async function handleSelectDriver(driverId: number, driverName: string, driverValue: number) {
@@ -41,7 +42,10 @@ const RideOptionsPage: React.FC = () => {
       };
       await rideService.confirmRide(body);
 
-      navigate("/ride-history");
+      setSuccessMessage("Viagem solicitada com sucesso! Aguarde um momento e você será redirecionado.");
+      setTimeout(() => {
+        navigate("/ride-history");
+      }, 3000);
     } catch (err: any) {
       setErrorMessage(err.response.data.error_description || "Ocorreu um erro ao solicitar a viagem.");
       setTimeout(() => {
@@ -67,6 +71,7 @@ const RideOptionsPage: React.FC = () => {
               />
             </MapContainer>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
             {
               driversList.length > 0 ? (
                 <>
@@ -95,6 +100,7 @@ const RideOptionsPage: React.FC = () => {
                           <TableCell>{formatUtils.formatValue(driver.value)}</TableCell>
                           <TableCell>
                             <Button
+                              disabled={!!successMessage}
                               onClick={() =>
                                 handleSelectDriver(driver.id, driver.name, driver.value)
                               }
@@ -215,7 +221,18 @@ const ErrorMessage = styled.div`
   border-radius: 4px;
   padding: 10px;
   text-align: center;
-  font-size: 14px;
+  font-size: 30px;
+`;
+
+const SuccessMessage = styled.div`
+  margin-top: 15px;
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  padding: 10px;
+  text-align: center;
+  font-size: 30px;
 `;
 
 export default RideOptionsPage;
