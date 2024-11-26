@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -22,11 +22,13 @@ const RequestRidePage: React.FC = () => {
     setEstimateRideData: () => { }, setDriversList: () => { },
     setUrlSafePolyline: () => { },
   };
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
+      setErrorMessage(null);
       const responseEstimateRide: AxiosResponse<EstimateRideData> = await rideService.estimateRide(customerId, origin, destination);
       setEstimateRideData(responseEstimateRide.data);
       setDriversList(responseEstimateRide.data.options);
@@ -41,7 +43,10 @@ const RequestRidePage: React.FC = () => {
       setEstimateRideData(null);
       setDriversList([]);
       setUrlSafePolyline("");
-      alert(err.response.data.error_description);
+      setErrorMessage(err.response.data.error_description || "Ocorreu um erro ao estimar a viagem.");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 3000);
     }
   };
 
@@ -73,6 +78,7 @@ const RequestRidePage: React.FC = () => {
           />
           <SubmitButton type="submit">Estimar Viagem</SubmitButton>
         </form>
+        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </FormContainer>
     </PageContainer>
   );
@@ -135,6 +141,18 @@ const SubmitButton = styled.button`
   &:hover {
     background-color: #0056b3;
   }
+`;
+
+const ErrorMessage = styled.div`
+  margin-top: 15px;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  width: 100%;
 `;
 
 export default RequestRidePage;

@@ -11,25 +11,34 @@ const RideHistoryPage: React.FC = () => {
   const [driverId, setDriverId] = useState<string | undefined>(undefined);
   const [drivers, setDrivers] = useState<DriverFromDatabase[]>([]);
   const [rides, setRides] = useState<Ride[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     driverService
       .getDriversListFromDatabase()
       .then((response) => {
+        setErrorMessage(null);
         setDrivers(response.data);
       })
       .catch((err) => {
-        alert(err.response.data.error_description);
+        setErrorMessage(err.response.data.error_description || "Ocorreu um erro ao buscar a lista de motoristas. Reinicie a página.");
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 3000);
       });
   }, []);
 
   async function handleFilter() {
     try {
+      setErrorMessage(null);
       const response = await rideService.getRideHistory(userId, driverId ? parseInt(driverId) : undefined);
       setRides(response.data.rides);
     } catch (err: any) {
       setRides([]);
-      alert(err.response.data.error_description);
+      setErrorMessage(err.response.data.error_description || "Ocorreu um erro ao buscar o histórico de viagens.");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 3000);
     }
   };
 
@@ -54,6 +63,7 @@ const RideHistoryPage: React.FC = () => {
         </select>
         <button onClick={handleFilter}>Filtrar</button>
       </FilterContainer>
+      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
       <RideList>
         {rides.length > 0 ? (
@@ -167,6 +177,17 @@ const NoHistoryMessage = styled.div`
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const ErrorMessage = styled.div`
+  margin-top: 15px;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
 `;
 
 export default RideHistoryPage;

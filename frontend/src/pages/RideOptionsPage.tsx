@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -18,10 +18,12 @@ const RideOptionsPage: React.FC = () => {
     destination: "", estimateRideData: null,
     driversList: [], urlSafePolyline: "",
   };
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   async function handleSelectDriver(driverId: number, driverName: string, driverValue: number) {
     try {
+      setErrorMessage(null);
       const body: BodyConfirmRide = {
         customer_id: customerId,
         origin,
@@ -38,7 +40,10 @@ const RideOptionsPage: React.FC = () => {
 
       navigate("/ride-history");
     } catch (err: any) {
-      alert(err.response.data.error_description);
+      setErrorMessage(err.response.data.error_description || "Ocorreu um erro ao solicitar a viagem.");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 3000);
     }
   };
 
@@ -51,6 +56,7 @@ const RideOptionsPage: React.FC = () => {
           alt="Mapa"
         />
       </MapContainer>
+      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       {
         driversList.length > 0 ? (
           <>
@@ -187,6 +193,17 @@ const NoDriversMessage = styled.div`
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const ErrorMessage = styled.div`
+  margin-top: 15px;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
 `;
 
 export default RideOptionsPage;
