@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+import { BASE_URL } from "../constants/constants";
 
 function getDriversListFromDatabase() {
   return axios.get(`${BASE_URL}/driver/list`);

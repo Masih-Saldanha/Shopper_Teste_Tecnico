@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import Loading from "../components/Loading";
 import GeneralContext from "../contexts/generalContext";
-import networkRequests from "../actions/networkRequests";
+import healthService from "../services/healthService";
 
 const HealthPage: React.FC = () => {
   const general = useContext(GeneralContext);
@@ -11,17 +11,13 @@ const HealthPage: React.FC = () => {
   const [health, setHealth] = useState("Sem resposta ainda");
 
   useEffect(() => {
-    console.log(process.env.REACT_APP_BASE_URL);
-    networkRequests
+    healthService
       .getHealth()
       .then((response) => {
-        console.log("response: ");
-        console.log(response);
         setHealth(response.data);
       })
-      .catch((e) => {
-        console.error("erro: ", e);
-        alert(e.response.data.error_description);
+      .catch((err) => {
+        alert(err.response.data.error_description);
       })
   }, []);
 

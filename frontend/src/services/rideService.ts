@@ -1,8 +1,7 @@
 import axios from "axios";
 
-import { BodyConfirmRide, GetEncodedPolyline } from "../contexts/generalContext";
-
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+import { BodyConfirmRide, GetEncodedPolyline } from "../types";
+import { BASE_URL } from "../constants/constants";
 
 function estimateRide(customer_id: string, origin: string, destination: string) {
   return axios.post(`${BASE_URL}/ride/estimate`, { customer_id, origin, destination });

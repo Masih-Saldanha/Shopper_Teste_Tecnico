@@ -28,6 +28,10 @@ async function getRideHistory(req: Request, res: Response) {
   res.status(200).json(result);
 };
 
+async function getGeneral(req: Request, res: Response) {
+  res.status(400).json({ error_code: "INVALID_DATA", error_description: "Id de usuário não foi informado" });
+};
+
 async function getEncodedPolylineData(req: Request, res: Response) {
   const body: GetEncodedPolyline = req.body;
 
@@ -40,7 +44,8 @@ const rideController = {
   estimateRide,
   confirmRide,
   getRideHistory,
-  getEncodedPolylineData
+  getGeneral,
+  getEncodedPolylineData,
 };
 
 export default rideController;

@@ -1,13 +1,13 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+import { BASE_URL } from "../constants/constants";
 
 function getHealth() {
   return axios.get(`${BASE_URL}/health`);
 };
 
-const networkRequests = {
+const healthService = {
   getHealth,
 };
 
-export default networkRequests;
+export default healthService;

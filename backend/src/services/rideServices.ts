@@ -28,6 +28,7 @@ async function estimateRide(estimateRideData: SendEstimateRide) {
 
     const calculateDistanceResponse = await returnAxiosRequisition.calculateDistance(originCoordinates, destinationCoordinates);
     const calculateDistance = calculateDistanceResponse.data;
+    throwError(!calculateDistance.routes, "Bad Request", "Rota impossível");
 
     const distanceInKm = calculateDistance.routes[0].distanceMeters / 1000;
     const distanceInKmRounded = parseFloat(distanceInKm.toFixed(3));
@@ -70,7 +71,7 @@ async function estimateRide(estimateRideData: SendEstimateRide) {
     return result;
 
   } catch (error: any) {
-    console.error("error: ", error.response.data);
+    console.error("error: ", error);
     if (error.type) {
       throwError(true, error.type, error.message);
     } else if (error.response.data.error.message) {
@@ -113,18 +114,16 @@ async function getRidesListByCustomerIdAndDriverId(customer_id: string, driver_i
     || customer_id.trim() === "";
   throwError(isCustomerInvalid, "Bad Request", "Usuario invalido");
 
-  let ridesFound: (Rides & { drivers: Drivers })[];
+  let ridesFound: (Rides & { drivers: Drivers })[] = await rideRepository.getRidesListByCustomerId(customer_id);
+  throwError(ridesFound.length < 1, "Not Found", "Esse usuário ainda não solicitou uma viagem");
   if (driver_id) {
     const isNumeric = /^\d+$/.test(driver_id);
     const driver_id_number = parseInt(driver_id, 10);
     const isDriverIdInvalid = !isNumeric || isNaN(driver_id_number) || driver_id_number <= 0;
     throwError(isDriverIdInvalid, "Bad Request", "Motorista invalido");
 
-    ridesFound = await rideRepository.getRidesListByCustomerIdAndDriverId(customer_id, driver_id_number);
+    ridesFound = ridesFound.filter(ride => ride.driverId === driver_id_number)
     throwError(ridesFound.length < 1, "Not Found", "Nenhum registro encontrado para esse motorista");
-  } else {
-    ridesFound = await rideRepository.getRidesListByCustomerId(customer_id);
-    throwError(ridesFound.length < 1, "Not Found", "Nenhum registro encontrado");
   }
 
   const rides = ridesFound.map(ride => {
@@ -158,7 +157,7 @@ async function getEncodedPolylineData(getEncodedPolyline: GetEncodedPolyline) {
 
     return urlSafePolyline;
   } catch (error: any) {
-    console.error("error: ", error.response.data);
+    console.error("error: ", error);
     if (error.type) {
       throwError(true, error.type, error.message);
     } else if (error.response.data.error.message) {

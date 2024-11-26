@@ -20,23 +20,9 @@ async function getRidesListByCustomerId(customerId: string) {
   });
 };
 
-async function getRidesListByCustomerIdAndDriverId(customerId: string, driverId: number) {
-  return prisma.rides.findMany({
-    where: {
-      customerId,
-      driverId,
-    },
-    include: {
-      drivers: true,
-    },
-    orderBy: { date: "desc" },
-  });
-};
-
 const rideRepository = {
   saveRide,
   getRidesListByCustomerId,
-  getRidesListByCustomerIdAndDriverId,
 };
 
 export default rideRepository;
