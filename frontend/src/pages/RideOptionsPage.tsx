@@ -6,6 +6,7 @@ import rideService from "../services/rideService";
 import GeneralContext from "../contexts/generalContext";
 import { BodyConfirmRide } from "../types";
 import formatUtils from "../utils/formatUtils";
+import Loading from "../components/Loading";
 
 const RideOptionsPage: React.FC = () => {
   const general = useContext(GeneralContext);
@@ -18,11 +19,13 @@ const RideOptionsPage: React.FC = () => {
     destination: "", estimateRideData: null,
     driversList: [], urlSafePolyline: "",
   };
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   async function handleSelectDriver(driverId: number, driverName: string, driverValue: number) {
     try {
+      setIsLoading(true);
       setErrorMessage(null);
       const body: BodyConfirmRide = {
         customer_id: customerId,
@@ -44,69 +47,78 @@ const RideOptionsPage: React.FC = () => {
       setTimeout(() => {
         setErrorMessage(null);
       }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Container>
-      <Title>Opções de Viagem</Title>
-      <MapContainer>
-        <MapImage
-          src={`https://maps.googleapis.com/maps/api/staticmap?size=600x400&path=enc:${urlSafePolyline}&markers=color:green|label:A|${origin}&markers=color:red|label:B|${destination}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`}
-          alt="Mapa"
-        />
-      </MapContainer>
-      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       {
-        driversList.length > 0 ? (
-          <>
-            <Table>
-              <TableHead>
-                <tr>
-                  <TableHeaderCell>Nome</TableHeaderCell>
-                  <TableHeaderCell>Descrição</TableHeaderCell>
-                  <TableHeaderCell>Veículo</TableHeaderCell>
-                  <TableHeaderCell>Avaliação</TableHeaderCell>
-                  <TableHeaderCell>Valor da viagem</TableHeaderCell>
-                  <TableHeaderCell>Ação</TableHeaderCell>
-                </tr>
-              </TableHead>
-              <tbody>
-                {driversList.map((driver) => (
-                  <TableRow key={driver.id}>
-                    <TableCell>{driver.name}</TableCell>
-                    <TableCell>{driver.description}</TableCell>
-                    <TableCell>{driver.vehicle}</TableCell>
-                    <TableCell>
-                      {driver.review.rating}/5
-                      <br />
-                      <small>{driver.review.comment}</small>
-                    </TableCell>
-                    <TableCell>{formatUtils.formatValue(driver.value)}</TableCell>
-                    <TableCell>
-                      <Button
-                        onClick={() =>
-                          handleSelectDriver(driver.id, driver.name, driver.value)
-                        }
-                      >
-                        Escolher {driver.name}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </tbody>
-            </Table>
-          </>
+        isLoading ? (
+          <Loading message="Processando sua solicitação..." />
         ) : (
-          <NoDriversContainer>
-            <NoDriversMessage>
-              Nenhum motorista disponível para essa corrida no momento.
-              Pontos de origem e destino muito próximos.
-            </NoDriversMessage>
-          </NoDriversContainer>
+          <>
+            <Title>Opções de Viagem</Title>
+            <MapContainer>
+              <MapImage
+                src={`https://maps.googleapis.com/maps/api/staticmap?size=600x400&path=enc:${urlSafePolyline}&markers=color:green|label:A|${origin}&markers=color:red|label:B|${destination}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`}
+                alt="Mapa"
+              />
+            </MapContainer>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            {
+              driversList.length > 0 ? (
+                <>
+                  <Table>
+                    <TableHead>
+                      <tr>
+                        <TableHeaderCell>Nome</TableHeaderCell>
+                        <TableHeaderCell>Descrição</TableHeaderCell>
+                        <TableHeaderCell>Veículo</TableHeaderCell>
+                        <TableHeaderCell>Avaliação</TableHeaderCell>
+                        <TableHeaderCell>Valor da viagem</TableHeaderCell>
+                        <TableHeaderCell>Ação</TableHeaderCell>
+                      </tr>
+                    </TableHead>
+                    <tbody>
+                      {driversList.map((driver) => (
+                        <TableRow key={driver.id}>
+                          <TableCell>{driver.name}</TableCell>
+                          <TableCell>{driver.description}</TableCell>
+                          <TableCell>{driver.vehicle}</TableCell>
+                          <TableCell>
+                            {driver.review.rating}/5
+                            <br />
+                            <small>{driver.review.comment}</small>
+                          </TableCell>
+                          <TableCell>{formatUtils.formatValue(driver.value)}</TableCell>
+                          <TableCell>
+                            <Button
+                              onClick={() =>
+                                handleSelectDriver(driver.id, driver.name, driver.value)
+                              }
+                            >
+                              Escolher {driver.name}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </tbody>
+                  </Table>
+                </>
+              ) : (
+                <NoDriversContainer>
+                  <NoDriversMessage>
+                    Nenhum motorista disponível para essa corrida no momento.
+                    Pontos de origem e destino muito próximos.
+                  </NoDriversMessage>
+                </NoDriversContainer>
+              )
+            }
+          </>
         )
       }
-
     </Container>
   );
 

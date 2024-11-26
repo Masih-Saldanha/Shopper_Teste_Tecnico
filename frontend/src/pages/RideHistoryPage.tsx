@@ -5,6 +5,7 @@ import rideService from "../services/rideService";
 import driverService from "../services/driverService";
 import { DriverFromDatabase, Ride } from "../types";
 import formatUtils from "../utils/formatUtils";
+import Loading from "../components/Loading";
 
 const RideHistoryPage: React.FC = () => {
   const [userId, setUserId] = useState("");
@@ -12,11 +13,13 @@ const RideHistoryPage: React.FC = () => {
   const [drivers, setDrivers] = useState<DriverFromDatabase[]>([]);
   const [rides, setRides] = useState<Ride[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     driverService
       .getDriversListFromDatabase()
       .then((response) => {
+        setIsLoading(true);
         setErrorMessage(null);
         setDrivers(response.data);
       })
@@ -25,11 +28,15 @@ const RideHistoryPage: React.FC = () => {
         setTimeout(() => {
           setErrorMessage(null);
         }, 3000);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
   async function handleFilter() {
     try {
+      setIsLoading(true);
       setErrorMessage(null);
       const response = await rideService.getRideHistory(userId, driverId ? parseInt(driverId) : undefined);
       setRides(response.data.rides);
@@ -39,66 +46,75 @@ const RideHistoryPage: React.FC = () => {
       setTimeout(() => {
         setErrorMessage(null);
       }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Container>
-      <h1>Histórico de Viagens</h1>
-      <FilterContainer>
-        <input
-          type="text"
-          placeholder="ID do Usuário"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          required
-        />
-        <select onChange={(e) => setDriverId(e.target.value || undefined)} value={driverId || ""}>
-          <option value="">Nenhum motorista selecionado</option>
-          {drivers.map((driver) => (
-            <option key={driver.id} value={driver.id.toString()}>
-              {driver.nome}
-            </option>
-          ))}
-        </select>
-        <button onClick={handleFilter}>Filtrar</button>
-      </FilterContainer>
-      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-
-      <RideList>
-        {rides.length > 0 ? (
-          rides.map((ride) => (
-            <RideCard key={ride.id}>
-              <RideInfo>
-                <strong>Data e hora da viagem:</strong> {formatUtils.formatDate(ride.date)}
-              </RideInfo>
-              <RideInfo>
-                <strong>Nome do motorista:</strong> {ride.driver.name}
-              </RideInfo>
-              <RideInfo>
-                <strong>Origem:</strong> {ride.origin}
-              </RideInfo>
-              <RideInfo>
-                <strong>Destino:</strong> {ride.destination}
-              </RideInfo>
-              <RideInfo>
-                <strong>Distância percorrida:</strong> {formatUtils.formatDistance(ride.distance)}
-              </RideInfo>
-              <RideInfo>
-                <strong>Tempo de viagem:</strong> {formatUtils.formatDuration(ride.duration)}
-              </RideInfo>
-              <RideInfo>
-                <strong>Valor da viagem:</strong> {formatUtils.formatValue(ride.value)}
-              </RideInfo>
-            </RideCard>
-          ))
+      {
+        isLoading ? (
+          <Loading message="Processando sua solicitação..." />
         ) : (
-          <NoHistoryContainer>
-            <NoHistoryMessage>Faça uma busca para exibir o histórico</NoHistoryMessage>
-          </NoHistoryContainer>
-        )}
-      </RideList>
+          <>
+            <h1>Histórico de Viagens</h1>
+            <FilterContainer>
+              <input
+                type="text"
+                placeholder="ID do Usuário"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                required
+              />
+              <select onChange={(e) => setDriverId(e.target.value || undefined)} value={driverId || ""}>
+                <option value="">Nenhum motorista selecionado</option>
+                {drivers.map((driver) => (
+                  <option key={driver.id} value={driver.id.toString()}>
+                    {driver.nome}
+                  </option>
+                ))}
+              </select>
+              <button onClick={handleFilter}>Filtrar</button>
+            </FilterContainer>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
+            <RideList>
+              {rides.length > 0 ? (
+                rides.map((ride) => (
+                  <RideCard key={ride.id}>
+                    <RideInfo>
+                      <strong>Data e hora da viagem:</strong> {formatUtils.formatDate(ride.date)}
+                    </RideInfo>
+                    <RideInfo>
+                      <strong>Nome do motorista:</strong> {ride.driver.name}
+                    </RideInfo>
+                    <RideInfo>
+                      <strong>Origem:</strong> {ride.origin}
+                    </RideInfo>
+                    <RideInfo>
+                      <strong>Destino:</strong> {ride.destination}
+                    </RideInfo>
+                    <RideInfo>
+                      <strong>Distância percorrida:</strong> {formatUtils.formatDistance(ride.distance)}
+                    </RideInfo>
+                    <RideInfo>
+                      <strong>Tempo de viagem:</strong> {formatUtils.formatDuration(ride.duration)}
+                    </RideInfo>
+                    <RideInfo>
+                      <strong>Valor da viagem:</strong> {formatUtils.formatValue(ride.value)}
+                    </RideInfo>
+                  </RideCard>
+                ))
+              ) : (
+                <NoHistoryContainer>
+                  <NoHistoryMessage>Faça uma busca para exibir o histórico</NoHistoryMessage>
+                </NoHistoryContainer>
+              )}
+            </RideList>
+          </>
+        )
+      }
     </Container>
   );
 };

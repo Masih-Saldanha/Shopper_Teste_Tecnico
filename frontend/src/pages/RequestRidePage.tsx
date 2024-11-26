@@ -6,6 +6,7 @@ import styled from "styled-components";
 import rideService from "../services/rideService";
 import GeneralContext from "../contexts/generalContext";
 import { EstimateRideData } from "../types";
+import Loading from "../components/Loading";
 
 const RequestRidePage: React.FC = () => {
   const general = useContext(GeneralContext);
@@ -22,12 +23,14 @@ const RequestRidePage: React.FC = () => {
     setEstimateRideData: () => { }, setDriversList: () => { },
     setUrlSafePolyline: () => { },
   };
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
+      setIsLoading(true);
       setErrorMessage(null);
       const responseEstimateRide: AxiosResponse<EstimateRideData> = await rideService.estimateRide(customerId, origin, destination);
       setEstimateRideData(responseEstimateRide.data);
@@ -47,39 +50,47 @@ const RequestRidePage: React.FC = () => {
       setTimeout(() => {
         setErrorMessage(null);
       }, 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <PageContainer>
-      <FormContainer>
-        <h1>Solicitar Viagem</h1>
-        <form onSubmit={handleSubmit}>
-          <FormInput
-            type="text"
-            placeholder="ID do Usuário"
-            value={customerId}
-            onChange={(e) => setCustomerId(e.target.value)}
-            required
-          />
-          <FormInput
-            type="text"
-            placeholder="Endereço de Origem"
-            value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
-            required
-          />
-          <FormInput
-            type="text"
-            placeholder="Endereço de Destino"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            required
-          />
-          <SubmitButton type="submit">Estimar Viagem</SubmitButton>
-        </form>
-        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-      </FormContainer>
+      {
+        isLoading ? (
+          <Loading message="Processando sua solicitação..." />
+        ) : (
+          <FormContainer>
+            <h1>Solicitar Viagem</h1>
+            <form onSubmit={handleSubmit}>
+              <FormInput
+                type="text"
+                placeholder="ID do Usuário"
+                value={customerId}
+                onChange={(e) => setCustomerId(e.target.value)}
+                required
+              />
+              <FormInput
+                type="text"
+                placeholder="Endereço de Origem"
+                value={origin}
+                onChange={(e) => setOrigin(e.target.value)}
+                required
+              />
+              <FormInput
+                type="text"
+                placeholder="Endereço de Destino"
+                value={destination}
+                onChange={(e) => setDestination(e.target.value)}
+                required
+              />
+              <SubmitButton type="submit">Estimar Viagem</SubmitButton>
+            </form>
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+          </FormContainer>
+        )
+      }
     </PageContainer>
   );
 
