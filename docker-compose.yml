@@ -17,7 +17,7 @@ services:
     build: 
       context: ./backend
     ports:
-      - 5000:5000
+      - 8080:8080
     depends_on:
       - postgres_shopper_db
     env_file:
@@ -31,7 +31,7 @@ services:
     build: 
       context: ./frontend
       args:
-        REACT_APP_BASE_URL: "http://localhost:5000"
+        REACT_APP_BASE_URL: "http://localhost:8080"
         REACT_APP_GOOGLE_API_KEY: "${GOOGLE_API_KEY}"
     volumes:
       - build_react:/var/www/html
@@ -42,7 +42,7 @@ services:
     container_name: nginx_shopper_app
     build: ./nginx
     ports:
-      - 8080:80
+      - 80:80
     volumes:
       - build_react:/var/www/html
     depends_on:

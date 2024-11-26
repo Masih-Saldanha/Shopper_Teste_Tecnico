@@ -1,4 +1,5 @@
 import Joi from "joi";
+
 import { GetEncodedPolyline, SendEstimateRide, SendRideConfirm } from "../types/rideTypes.js";
 
 const sendEstimateRideData = Joi.object<SendEstimateRide>({
