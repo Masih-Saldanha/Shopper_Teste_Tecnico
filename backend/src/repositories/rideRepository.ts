@@ -1,8 +1,5 @@
-import { Rides } from "@prisma/client";
-
 import prisma from "../config/database.js";
-
-export type RideData = Omit<Rides, "id">;
+import { RideData } from "../types/dataBaseTypes.js";
 
 async function saveRide(data: RideData) {
   await prisma.rides.create({ data });

@@ -3,8 +3,8 @@ import { Drivers, Rides } from "@prisma/client";
 import returnAxiosRequisition from "../helpers/returnAxiosRequisition.js";
 import driverRepository from "../repositories/driverRepository.js";
 import rideRepository from "../repositories/rideRepository.js";
-import { GetEncodedPolyline, SendEstimateRide, SendRideConfirm } from "../schemas/rideSchema.js";
 import { throwError } from "../utils/errorTypeUtils.js";
+import { GetEncodedPolyline, SendEstimateRide, SendRideConfirm } from "../types/rideTypes.js";
 
 async function estimateRide(estimateRideData: SendEstimateRide) {
   try {

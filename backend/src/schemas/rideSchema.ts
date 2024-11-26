@@ -1,10 +1,5 @@
 import Joi from "joi";
-
-export type SendEstimateRide = {
-  customer_id: string;
-  origin: string;
-  destination: string;
-};
+import { GetEncodedPolyline, SendEstimateRide, SendRideConfirm } from "../types/rideTypes.js";
 
 const sendEstimateRideData = Joi.object<SendEstimateRide>({
   customer_id: Joi.string().min(1).required().messages({
@@ -35,19 +30,6 @@ const sendEstimateRideData = Joi.object<SendEstimateRide>({
     }
     return value;
   });
-
-export type SendRideConfirm = {
-  customer_id: string;
-  origin: string;
-  destination: string;
-  distance: number;
-  duration: string;
-  driver: {
-    id: number;
-    name: string;
-  };
-  value: number;
-}
 
 const sendRideConfirmData = Joi.object<SendRideConfirm>({
   customer_id: Joi.string().min(1).required().messages({
@@ -103,11 +85,6 @@ const sendRideConfirmData = Joi.object<SendRideConfirm>({
     }
     return value;
   });
-
-export type GetEncodedPolyline = {
-  origin: { latitude: number; longitude: number; };
-  destination: { latitude: number; longitude: number; };
-};
 
 const getEncodedPolylineData = Joi.object<GetEncodedPolyline>({
   origin: Joi.object({

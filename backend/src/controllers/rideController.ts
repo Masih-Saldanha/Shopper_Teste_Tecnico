@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
-import { GetEncodedPolyline, SendEstimateRide, SendRideConfirm } from "../schemas/rideSchema.js";
 import rideService from "../services/rideServices.js";
+import { GetEncodedPolyline, SendEstimateRide, SendRideConfirm } from "../types/rideTypes.js";
 
 async function estimateRide(req: Request, res: Response) {
   const body: SendEstimateRide = req.body;
